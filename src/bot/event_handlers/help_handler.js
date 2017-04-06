@@ -29,7 +29,7 @@ function helpRules(session, message) {
     Your win is derived directly from the transaction hash of the \
     payment that you send me. I'll take the first 10 characters of \
     that hash and cast it to an integer. Then I'll mod it by 100. \
-    If the result is greater than or equal to 51, you win. Otherwise, \
+    If the result is greater than or equal to 50, you win. Otherwise, \
     you lose.
   `;
 
