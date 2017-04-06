@@ -1,12 +1,33 @@
 const SOFA = require('sofa-js');
 const Big = require('big.js');
-const Fiat = require('../../lib/Fiat');
+const History = require('../../lib/History');
+
+const winIcons = ['🎉', '🤑', '💸'];
+const loseIcons = ['😞', '😢', '😭', '😰', '🤢', '😱'];
+
+const bettingTexts = [
+  'Rolling the dice... 🎲',
+  'Consulting the stars... ✨',
+];
+
+function winIcon() {
+  return winIcons[Math.floor(Math.random() * winIcons.length)];
+}
+
+function loseIcon() {
+  return loseIcons[Math.floor(Math.random() * winIcons.length)];
+}
+
+function bettingText() {
+  return bettingTexts[Math.floor(Math.random() * bettingTexts.length)];
+}
 
 function win(session, message) {
   const { ethValue } = message;
   const payoutValue = parseFloat(Big(ethValue).mul(2));
+  History.pushWin(payoutValue);
 
-  session.reply('You win! 🎉');
+  session.reply(`You win! ${winIcon()}`);
   session.sendEth(payoutValue, function(session, err, result) {
     if (err) {
       // TODO (Craig): Actually handle the error
@@ -14,40 +35,29 @@ function win(session, message) {
       console.log('err.stack', err.stack);
     }
 
-    let amounts = [1];
-    const controls = [];
-
-    Fiat.fetch(0).then((toEth) => {
-      const threshold = toEth.USD(3);
-
-      if (payoutValue > threshold) {
-        amounts = amounts.concat([4, 8]);
-      }
-      else {
-        amounts = amounts.concat([2, 3]);
-      }
-
-      amounts.forEach((amount) => controls.push({
-        type: "button", label: `$${amount}`, value: amount
-      }));
-
-      session.reply(SOFA.Message({
-        body: 'Play again?',
-        controls: controls
-      }));
-    });
+    session.reply(SOFA.Message({
+      body: `Play again?`,
+      controls: [
+        {type: "button", label: "$1", value: 1},
+        {type: "button", label: "$2", value: 2},
+        {type: "button", label: "$3", value: 3},
+        {type: "button", label: "🎲", value: 'bet-random'},
+      ]
+    }));
   });
 }
 
 function lose(session, message) {
   const { ethValue } = message;
+  History.pushLoss(ethValue);
+
   session.set('last_loss_value', ethValue);
   session.reply(SOFA.Message({
-    body: `Rats, you lost! 😭`,
+    body: `Rats, you lost! ${loseIcon()}`,
     controls: [
       {type: "button", label: "Play again", value: "play-again"},
       {type: "button", label: "Double up", value: "double-up"},
-      {type: "button", label: "Prove it", value: "prove-loss"},
+      {type: "button", label: "Prove it", value: "help-prove-loss"},
     ]
   }));
 }
@@ -63,9 +73,9 @@ function winOrLose(session, message) {
   const number = parseInt(part);
   const remainder = Big(number).mod(100);
 
-  remainder.lt(48)
-    ? win(session, message)
-    : lose(session, message);
+  remainder.lt(50)
+    ? lose(session, message)
+    : win(session, message);
 }
 
 module.exports = function(session, message) {
@@ -82,11 +92,6 @@ module.exports = function(session, message) {
     return;
   }
 
-  session.reply('Rolling the dice... 🎲');
+  session.reply(bettingText());
   setTimeout(winOrLose.bind(this, session, message), 2500);
 }
-
-
-
-// example ethereum tx hash:
-// 0xed973b234cf2238052c9ac87072c71bcf33abc1bbd721018e0cca448ef79b379

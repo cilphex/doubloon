@@ -3,17 +3,28 @@ const Fiat = require('../../lib/Fiat');
 const help = require('./help_handler');
 
 function play(session, message) {
-  session.reply(`Let's play!`);
-
-  Fiat.fetch(0).then((toEth) => {
-    let requestAmount = toEth.USD(1);
-    session.requestEth(requestAmount);
-  });
+  session.reply(SOFA.Message({
+    body: `Let's play!`,
+    controls: [
+      {type: "button", label: "$1", value: 1},
+      {type: "button", label: "$2", value: 2},
+      {type: "button", label: "$3", value: 3},
+      {type: "button", label: "🎲", value: 'bet-random'},
+    ]
+  }));
 }
 
 module.exports = function(session, message) {
-  const keyword = message.content.body.toLowerCase();
+  console.log('message')
+  const { body } = message.content;
 
+  if (!body) {
+    session.reply('🖼 👀 🆒');
+    play(session, message);
+    return;
+  }
+
+  const keyword = body.toLowerCase();
   switch (keyword) {
     case 'help':
       help(session, message);

@@ -3,9 +3,15 @@ const Big = require('big.js');
 const Fiat = require('../../lib/Fiat');
 const help = require('./help_handler');
 
+const teaseIcons = ['😈'];
+
+function teaseIcon() {
+  return teaseIcons[Math.floor(Math.random() * teaseIcons.length)];
+}
+
 function doubleUp(session, message) {
   let requestAmount = session.get('last_loss_value');
-  session.reply(`That's what I like to see. 😈`);
+  session.reply(`That's what I like to see. ${teaseIcon()}`);
 
   if (requestAmount) {
     requestAmount = parseFloat(Big(requestAmount).mul(2));
@@ -36,32 +42,14 @@ function betAmount(session, message) {
   });
 }
 
-function proveLoss(session, message) {
-  const txHash = session.get('last_tx_hash');
+function betRandom(session, message) {
+  const amount = Math.ceil(Math.random() * 7) + 3;
 
-  if (!txHash) {
-    session.reply(`You haven't bet yet.`);
-  }
-
-  const part = txHash.substr(0, 10);
-  const number = parseInt(part);
-  const remainder = Big(number).mod(100);
-  let replyText = `
-    Your last payment to me had a transaction hash starting with ${part}.
-    When cast to an integer, its value is ${number}. ${number} % 100 is
-    ${remainder}. ${remainder} is greater than 48, so you lose.
-  `;
-
-  replyText = replyText.trim().replace(/\s+/g, ' ');
-
-  session.reply(SOFA.Message({
-    body: replyText,
-    controls: [
-      {type: "button", label: `View tx`, value: 'view-last-tx'},
-      {type: "button", label: `Double up`, value: 'double-up'},
-      {type: "button", label: `Help`, value: 'help'},
-    ]
-  }));
+  Fiat.fetch(0).then((toEth) => {
+    let requestAmount = toEth.USD(amount);
+    session.reply(`YOLO`);
+    session.requestEth(requestAmount);
+  });
 }
 
 function viewLastTx(session, message) {
@@ -99,14 +87,15 @@ module.exports = function(session, message) {
     case 'double-up':
       doubleUp(session, message);
       break;
+    case 'play':
     case 'play-again':
       playAgain(session, message);
       break;
     case 'bet-amount':
       betAmount(session, message);
       break;
-    case 'prove-loss':
-      proveLoss(session, message);
+    case 'bet-random':
+      betRandom(session, message);
       break;
     case 'view-last-tx':
       viewLastTx(session, message);
