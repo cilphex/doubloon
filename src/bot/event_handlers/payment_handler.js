@@ -12,7 +12,7 @@ const bettingTexts = [
   'Reading the rainbows... 🌈',
   'Consulting the crystal... 🔮',
   'Cutting the custard... 🍮',
-  'Pulling levers... 🎰'
+  'Pulling the levers... 🎰'
 ];
 
 function winIcon() {

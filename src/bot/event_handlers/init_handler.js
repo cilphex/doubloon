@@ -1,3 +1,7 @@
-module.exports = function(session, message) {
-  session.reply('Init response');
+const Handler = require('./handler');
+
+module.exports = class InitHandler extends Handler {
+  reply() {
+    this.session.reply('Init response');
+  }
 }

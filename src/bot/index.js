@@ -6,13 +6,13 @@ let bot = new Bot();
 bot.onEvent = function(session, message) {
   switch(message.type) {
     case 'Init':
-      handlers.onInit(session, message);
+      new handlers.Init(this, session, message);
       break;
     case 'InitRequest':
-      handlers.onInitRequest(session, message);
+      new handlers.InitRequest(this, session, message);
       break;
     case 'Message':
-      handlers.onMessage(session, message);
+      new handlers.Message(this, session, message);
       break;
     case 'Command':
       handlers.onCommand(session, message);
@@ -21,7 +21,7 @@ bot.onEvent = function(session, message) {
       handlers.onPayment(session, message);
       break;
     case 'PaymentRequest':
-      handlers.onPaymentRequest(session, message);
+      new handlers.PaymentRequest(this, session, message);
       break;
   }
 }
