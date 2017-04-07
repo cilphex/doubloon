@@ -90,15 +90,14 @@ module.exports = function(session, message) {
   session.set('last_tx_hash', txHash);
 
   if (val.gt(1)) {
-    return session.reply('Thank you. :)');
-    // session.reply('The max bet is 1 ETH. Have this back.');
-    // session.sendEth(parseFloat(val), function(session, err, result) {
-    //   if (err) {
-    //     // TODO (Craig): Complete me later
-    //     session.reply(`There was an error! "${err.message}." Talk to my developer.`);
-    //   }
-    // });
-    // return;
+    session.reply('The max bet is 1 ETH. Have this back.');
+    session.sendEth(parseFloat(val), function(session, err, result) {
+      if (err) {
+        // TODO (Craig): Complete me later
+        session.reply(`There was an error! "${err.message}." Talk to my developer.`);
+      }
+    });
+    return;
   }
 
   session.reply(bettingText());
