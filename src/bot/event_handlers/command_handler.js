@@ -15,7 +15,8 @@ function doubleUp(session, message) {
 
   if (requestAmount) {
     requestAmount = parseFloat(Big(requestAmount).mul(2));
-    return session.requestEth(requestAmount);
+    session.requestEth(requestAmount);
+    return;
   }
 
   Fiat.fetch(0).then((toEth) => {
@@ -48,14 +49,22 @@ function betRandom(session, message) {
   Fiat.fetch(0).then((toEth) => {
     let requestAmount = toEth.USD(amount);
     session.reply(`YOLO`);
-    // session.reply(SOFA.Message({
-    //   attachments: [
-    //     {
-    //       type: 'image/gif',
-    //       url: 'attachments/yolo-1.gif',
-    //     }
-    //   ]
-    // }))
+    session.requestEth(requestAmount);
+  });
+}
+
+function letItRide(session, message) {
+  let requestAmount = session.get('last_win_value');
+  session.reply('Smart move.');
+
+  if (requestAmount) {
+    requestAmount = parseFloat(Big(requestAmount));
+    session.requestEth(requestAmount);
+    return;
+  }
+
+  Fiat.fetch(0).then((toEth) => {
+    requestAmount = toEth.USD(1);
     session.requestEth(requestAmount);
   });
 }
@@ -104,6 +113,9 @@ module.exports = function(session, message) {
       break;
     case 'bet-random':
       betRandom(session, message);
+      break;
+    case 'let-it-ride':
+      letItRide(session, message);
       break;
     case 'view-last-tx':
       viewLastTx(session, message);

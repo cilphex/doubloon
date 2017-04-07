@@ -32,9 +32,11 @@ function win(session, message) {
   const payoutValue = parseFloat(Big(ethValue).mul(2));
   History.pushWin(payoutValue);
 
+  session.set('last_win_value', payoutValue);
   session.reply(`You win! ${winIcon()}`);
   session.sendEth(payoutValue, function(session, err, result) {
     if (err) {
+      // TODO (Craig): Repay later
       session.reply(`There was an error! "${err.message}." I might be out of money...`);
     }
 
@@ -43,7 +45,7 @@ function win(session, message) {
       controls: [
         {type: "button", label: "$1", value: 1},
         {type: "button", label: "$2", value: 2},
-        {type: "button", label: "$3", value: 3},
+        {type: "button", label: "Let it ride", value: 'let-it-ride'},
         {type: "button", label: "🎲", value: 'bet-random'},
       ]
     }));
@@ -88,11 +90,15 @@ module.exports = function(session, message) {
   session.set('last_tx_hash', txHash);
 
   if (val.gt(1)) {
-    session.reply('The max bet is 1 ETH. Have this back.');
-    session.sendEth(parseFloat(val), function(session, err, result) {
-      // TODO (Craig): Handle error
-    });
-    return;
+    return session.reply('Thank you. :)');
+    // session.reply('The max bet is 1 ETH. Have this back.');
+    // session.sendEth(parseFloat(val), function(session, err, result) {
+    //   if (err) {
+    //     // TODO (Craig): Complete me later
+    //     session.reply(`There was an error! "${err.message}." Talk to my developer.`);
+    //   }
+    // });
+    // return;
   }
 
   session.reply(bettingText());
