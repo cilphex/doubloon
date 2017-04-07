@@ -48,6 +48,14 @@ function betRandom(session, message) {
   Fiat.fetch(0).then((toEth) => {
     let requestAmount = toEth.USD(amount);
     session.reply(`YOLO`);
+    // session.reply(SOFA.Message({
+    //   attachments: [
+    //     {
+    //       type: 'image/gif',
+    //       url: 'attachments/yolo-1.gif',
+    //     }
+    //   ]
+    // }))
     session.requestEth(requestAmount);
   });
 }

@@ -15,7 +15,6 @@ function play(session, message) {
 }
 
 module.exports = function(session, message) {
-  console.log('message')
   const { body } = message.content;
 
   if (!body) {

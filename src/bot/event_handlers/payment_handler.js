@@ -11,7 +11,8 @@ const bettingTexts = [
   'Whispering to the willows... 🍃',
   'Reading the rainbows... 🌈',
   'Consulting the crystal... 🔮',
-  'Cutting the custard... 🍮'
+  'Cutting the custard... 🍮',
+  'Pulling levers... 🎰'
 ];
 
 function winIcon() {
@@ -34,9 +35,7 @@ function win(session, message) {
   session.reply(`You win! ${winIcon()}`);
   session.sendEth(payoutValue, function(session, err, result) {
     if (err) {
-      // TODO (Craig): Actually handle the error
-      console.log('err.message', err.message);
-      console.log('err.stack', err.stack);
+      session.reply(`There was an error! "${err.message}." I might be out of money...`);
     }
 
     session.reply(SOFA.Message({
