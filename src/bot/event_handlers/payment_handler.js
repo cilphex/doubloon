@@ -2,12 +2,16 @@ const SOFA = require('sofa-js');
 const Big = require('big.js');
 const History = require('../../lib/History');
 
-const winIcons = ['🎉', '🤑', '💸'];
+const winIcons = ['🎉', '🤑', '💸', '🍻', '⭐'];
 const loseIcons = ['😞', '😢', '😭', '😰', '🤢', '😱'];
 
 const bettingTexts = [
   'Rolling the dice... 🎲',
-  'Consulting the stars... ✨',
+  'Studying the stars... ✨',
+  'Whispering to the willows... 🍃',
+  'Reading the rainbows... 🌈',
+  'Consulting the crystal... 🔮',
+  'Cutting the custard... 🍮'
 ];
 
 function winIcon() {
